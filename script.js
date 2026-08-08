@@ -21,9 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const liText = document.createTextNode(input)
     const spanText = document.createTextNode('+')
 
-    if (input) {
+    if (input.trim()) {
+      console.log(input.length)
       span.appendChild(spanText)
       li.appendChild(liText)
+      console.log(li.innerText)
       li.appendChild(span)
       li.classList.add('item-card')
       shoppingListStore.push(li.innerText.slice(0, -1))
