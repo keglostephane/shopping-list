@@ -19,19 +19,20 @@
         </div>
         <form action="">
           <div class="form-control">
-            <input name="item" type="text" placeholder="Enter Item" />
+            <input id="get-item" name="item" type="text"
+                   placeholder="Enter Item" />
           </div>
           <div class="form-control">
-            <button type="button">Add Item</button>
+            <button id="add-item" type="button">Add Item</button>
           </div>
           <div class="form-control">
-            <input class ="filter hidden" name="filter" type="search"
-                   placeholder="Filter Items" />
+            <input id="filter-item" class ="filter hidden" name="filter"
+                   type="search" placeholder="Filter Items" value="test" />
           </div>
         </form>
       </header>
       <main><!-- Main Content -->
-        <ul class="shopping-list"><!-- Shopping List -->
+        <ul id="shopping-list"><!-- Shopping List -->
         </ul>
       </main>
     </div>

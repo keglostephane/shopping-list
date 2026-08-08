@@ -85,7 +85,7 @@ main {
 
 /* Shopping List */
 
-ul.shopping-list {
+ul#shopping-list {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
