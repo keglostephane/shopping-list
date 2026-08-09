@@ -27,7 +27,7 @@ header {
     flex-direction: column;
     gap: 16px;
 
-    .heading {
+    #heading {
         display: flex;
         align-items: center;
         gap: 16px;
@@ -55,7 +55,7 @@ header form {
         outline: 1px solid #BFBFBF;
     }
 
-    input.filter {
+    input#filter-item {
         background-color: #F5F5F5;
         border-bottom: 1px solid #BFBFBF;
         outline: none;
