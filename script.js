@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const itemInput = document.querySelector('#get-item')
-  const addItembtn = document.querySelector('#add-item')
   const itemFilterInput = document.querySelector('#filter-item')
+  const addItembtn = document.querySelector('#add-item')
+  const clearAllbtn = document.querySelector('#delete-all')
   const shoppingList = document.querySelector('#shopping-list')
   const shoppingListStore = []
 
@@ -10,8 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   shoppingList.addEventListener('click', (event) => {
     if (event.target.tagName === 'SPAN') {
       deleteItem(event.target.parentElement)
-      RemoveFromShoppingListStore(event.target.parentElement)
-      toggleDisplayItemsFilter()
     }
   })
 
@@ -41,6 +40,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     clearItemInput()
     toggleDisplayItemsFilter()
+    toggleDisplayClearAll()
+  }
+
+  function deleteItem (item) {
+    item.remove()
+    RemoveFromShoppingListStore(item)
+    toggleDisplayItemsFilter()
+    toggleDisplayClearAll()
   }
 
   function toggleDisplayItemsFilter () {
@@ -48,8 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
       .toggle('hidden', shoppingListStore.length < 1)
   }
 
-  function deleteItem (item) {
-    item.remove()
+  function toggleDisplayClearAll () {
+    clearAllbtn.parentElement.classList
+      .toggle('hidden', shoppingListStore.length < 1)
   }
 
   function RemoveFromShoppingListStore (item) {
