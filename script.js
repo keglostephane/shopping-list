@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearItemInput()
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
+    itemInput.focus()
   }
 
   function deleteItem (item) {
@@ -50,15 +51,17 @@ document.addEventListener('DOMContentLoaded', () => {
     RemoveFromShoppingListStore(item)
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
+    itemInput.focus()
   }
 
   function deleteAllItems () {
-      while (shoppingList.lastElementChild) {
+    while (shoppingList.lastElementChild) {
       shoppingList.lastElementChild.remove()
       shoppingListStore.pop()
     }
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
+    itemInput.focus()
   }
 
   function toggleDisplayItemsFilter () {
