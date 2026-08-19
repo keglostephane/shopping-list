@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
+  clearAllbtn.addEventListener('click', deleteAllItems)
+
   function getItemInput () {
     return itemInput.value
   }
@@ -46,6 +48,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function deleteItem (item) {
     item.remove()
     RemoveFromShoppingListStore(item)
+    toggleDisplayItemsFilter()
+    toggleDisplayClearAll()
+  }
+
+  function deleteAllItems () {
+      while (shoppingList.lastElementChild) {
+      shoppingList.lastElementChild.remove()
+      shoppingListStore.pop()
+    }
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
   }
