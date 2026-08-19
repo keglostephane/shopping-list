@@ -6,12 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const shoppingListStore = []
 
   addItembtn.addEventListener('click', addItem)
+
   shoppingList.addEventListener('click', (event) => {
     if (event.target.tagName === 'SPAN') {
-        deleteItem(event.target.parentElement)
-        RemoveFromShoppingListStore(event.target.parentElement)
-        toggleDisplayItemsFilter()
-        
+      deleteItem(event.target.parentElement)
+      RemoveFromShoppingListStore(event.target.parentElement)
+      toggleDisplayItemsFilter()
     }
   })
 
@@ -44,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function toggleDisplayItemsFilter () {
-    itemFilterInput.classList.toggle('hidden', shoppingListStore.length < 1)
+    itemFilterInput.parentElement.classList
+      .toggle('hidden', shoppingListStore.length < 1)
   }
 
   function deleteItem (item) {
