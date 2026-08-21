@@ -1,18 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
   const itemInput = document.querySelector('#get-item')
   const itemFilterInput = document.querySelector('#filter-item')
-  const addItembtn = document.querySelector('#add-item')
-  const clearAllbtn = document.querySelector('#delete-all')
+  const addItemBtn = document.querySelector('#add-item')
+  const deleteAllBtn = document.querySelector('#delete-all')
   const shoppingList = document.querySelector('#shopping-list')
   const shoppingListStore = []
 
-  addItembtn.addEventListener('click', handleAddItem)
+  addItemBtn.addEventListener('click', handleAddItem)
 
   shoppingList.addEventListener('click', (event) => {
     handleDeleteItem(event)
   })
 
-  clearAllbtn.addEventListener('click', handleDeleteAllItems)
+  deleteAllBtn.addEventListener('click', handleDeleteAllItems)
 
   function handleAddItem () {
     addItem()
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function toggleDisplayClearAll () {
-    clearAllbtn.parentElement.classList
+    deleteAllBtn.parentElement.classList
       .toggle('hidden', shoppingListStore.length < 1)
   }
 
