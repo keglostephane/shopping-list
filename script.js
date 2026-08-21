@@ -6,15 +6,38 @@ document.addEventListener('DOMContentLoaded', () => {
   const shoppingList = document.querySelector('#shopping-list')
   const shoppingListStore = []
 
-  addItembtn.addEventListener('click', addItem)
+  addItembtn.addEventListener('click', handleAddItem)
 
   shoppingList.addEventListener('click', (event) => {
-    if (event.target.tagName === 'SPAN') {
-      deleteItem(event.target.parentElement)
-    }
+    handleDeleteItem(event)
   })
 
-  clearAllbtn.addEventListener('click', deleteAllItems)
+  clearAllbtn.addEventListener('click', handleDeleteAllItems)
+
+  function handleAddItem () {
+    addItem()
+    clearItemInput()
+    toggleDisplayItemsFilter()
+    toggleDisplayClearAll()
+    itemInput.focus()
+  }
+
+  function handleDeleteItem (event) {
+    if (event.target.tagName === 'SPAN') {
+      deleteItem(event.target.parentElement)
+      RemoveFromShoppingListStore(event.target.parentElement)
+      toggleDisplayItemsFilter()
+      toggleDisplayClearAll()
+      itemInput.focus()
+    }
+  }
+
+  function handleDeleteAllItems () {
+    deleteAllItems()
+    toggleDisplayItemsFilter()
+    toggleDisplayClearAll()
+    itemInput.focus()
+  }
 
   function getItemInput () {
     return itemInput.value
@@ -39,19 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
       shoppingListStore.push(li.innerText.slice(0, -1))
       shoppingList.appendChild(li)
     }
-
-    clearItemInput()
-    toggleDisplayItemsFilter()
-    toggleDisplayClearAll()
-    itemInput.focus()
   }
 
   function deleteItem (item) {
     item.remove()
-    RemoveFromShoppingListStore(item)
-    toggleDisplayItemsFilter()
-    toggleDisplayClearAll()
-    itemInput.focus()
   }
 
   function deleteAllItems () {
@@ -59,9 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
       shoppingList.lastElementChild.remove()
       shoppingListStore.pop()
     }
-    toggleDisplayItemsFilter()
-    toggleDisplayClearAll()
-    itemInput.focus()
   }
 
   function toggleDisplayItemsFilter () {
