@@ -22,8 +22,11 @@
             <input id="get-item" name="item" type="text"
                    placeholder="Enter Item" />
           </div>
-          <div class="form-control">
-            <button id="add-item" type="button">Add Item</button>
+          <div class="form-control buttons-group">
+            <button id="add-item" class="btn btn-add" type="button">
+              Add Item</button>
+            <button id="clear-input" class="btn btn-clear" type="button">
+              Clear</button>
           </div>
           <div class="form-control hidden">
             <input id="filter-item" name="filter"
@@ -34,7 +37,7 @@
       <main><!-- Main Content -->
         <ul id="shopping-list"><!-- Shopping List --></ul>
         <div class="form-control hidden">
-          <button id="delete-all">Clear All</button>
+          <button id="delete-all" class="btn btn-delete">Delete All</button>
         </div>
       </main>
     </div>

@@ -2,11 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const itemInput = document.querySelector('#get-item')
   const itemFilterInput = document.querySelector('#filter-item')
   const addItemBtn = document.querySelector('#add-item')
+  const clearItemInputBtn = document.querySelector('#clear-input')
   const deleteAllBtn = document.querySelector('#delete-all')
   const shoppingList = document.querySelector('#shopping-list')
   const shoppingListStore = []
 
   addItemBtn.addEventListener('click', handleAddItem)
+
+  clearItemInputBtn.addEventListener('click', handleClearItemInput)
 
   shoppingList.addEventListener('click', (event) => {
     handleDeleteItem(event)
@@ -37,6 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
     itemInput.focus()
+  }
+
+  function handleClearItemInput () {
+      clearItemInput()
+      itemInput.focus()
   }
 
   function getItemInput () {
