@@ -140,6 +140,10 @@ main ul#shopping-list {
     background-color: #2984D1;
 }
 
+.btn-update:hover {
+    background-color: #1C69A8;
+}
+
 .btn-delete {
     background-color: #E7180B;
     width: 100%;

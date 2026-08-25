@@ -3,52 +3,80 @@ document.addEventListener('DOMContentLoaded', () => {
   const itemFilterInput = document.querySelector('#filter-item')
   const addItemBtn = document.querySelector('#add-item')
   const clearItemInputBtn = document.querySelector('#clear-input')
+  const updateItemBtn = document.querySelector('#update-item')
   const deleteAllBtn = document.querySelector('#delete-all')
   const shoppingList = document.querySelector('#shopping-list')
+  let selectedItem = null
   const shoppingListStore = []
 
   addItemBtn.addEventListener('click', handleAddItem)
-
   clearItemInputBtn.addEventListener('click', handleClearItemInput)
-
-  shoppingList.addEventListener('click', (event) => {
-    handleDeleteItem(event)
-  })
-
+  updateItemBtn.addEventListener('click', handleUpdateItem)
+  shoppingList.addEventListener('click', handleModifyItem)
   deleteAllBtn.addEventListener('click', handleDeleteAllItems)
 
   function handleAddItem () {
+    selectedItem = null
     addItem()
     clearItemInput()
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
+    toggleDisplayUpdateItem()
     itemInput.focus()
   }
 
-  function handleDeleteItem (event) {
+  function handleUpdateItem () {
+    if (!selectedItem) return
+
+    if (getItemInput()) { updateItem() }
+
+    selectedItem = null
+    itemInput.focus()
+    clearItemInput()
+    toggleDisplayUpdateItem()
+  }
+
+  function handleModifyItem (event) {
     if (event.target.tagName === 'SPAN') {
-      deleteItem(event.target.parentElement)
-      RemoveFromShoppingListStore(event.target.parentElement)
-      toggleDisplayItemsFilter()
-      toggleDisplayClearAll()
+      handleDeleteItem(event)
+    } else if (event.target.tagName === 'LI') {
+      handleSelectItemToUpdate(event)
       itemInput.focus()
     }
   }
 
-  function handleDeleteAllItems () {
-    deleteAllItems()
+  function handleSelectItemToUpdate (event) {
+    selectedItem = event.target
+    itemInput.value = selectedItem.textContent.slice(0, -1)
+    toggleDisplayUpdateItem()
+  }
+
+  function handleDeleteItem (event) {
+    selectedItem = null
+    deleteItem(event.target.parentElement)
+    RemoveFromShoppingListStore(event.target.parentElement)
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
+    toggleDisplayUpdateItem()
     itemInput.focus()
   }
 
+  function handleDeleteAllItems () {
+    selectedItem = null
+    deleteAllItems()
+    itemInput.focus()
+    toggleDisplayItemsFilter()
+    toggleDisplayClearAll()
+    toggleDisplayUpdateItem()
+  }
+
   function handleClearItemInput () {
-      clearItemInput()
-      itemInput.focus()
+    clearItemInput()
+    itemInput.focus()
   }
 
   function getItemInput () {
-    return itemInput.value
+    return itemInput.value.trim()
   }
 
   function clearItemInput () {
@@ -57,19 +85,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function addItem () {
     const input = getItemInput()
+
+    if (!input) return
+
     const li = document.createElement('li')
     const span = document.createElement('span')
     const liText = document.createTextNode(input)
     const spanText = document.createTextNode('+')
+    span.appendChild(spanText)
+    li.appendChild(liText)
+    li.appendChild(span)
+    li.classList.add('item-card')
+    shoppingListStore.push(li.textContent.slice(0, -1))
+    shoppingList.appendChild(li)
+  }
 
-    if (input.trim()) {
-      span.appendChild(spanText)
-      li.appendChild(liText)
-      li.appendChild(span)
-      li.classList.add('item-card')
-      shoppingListStore.push(li.innerText.slice(0, -1))
-      shoppingList.appendChild(li)
-    }
+  function updateItem () {
+    const span = document.createElement('span')
+    const spanText = document.createTextNode('+')
+    const liText = document.createTextNode(getItemInput())
+    span.appendChild(spanText)
+    selectedItem.textContent = ''
+    selectedItem.appendChild(liText)
+    selectedItem.appendChild(span)
   }
 
   function deleteItem (item) {
@@ -91,6 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function toggleDisplayClearAll () {
     deleteAllBtn.parentElement.classList
       .toggle('hidden', shoppingListStore.length < 1)
+  }
+
+  function toggleDisplayUpdateItem () {
+    updateItemBtn.classList
+      .toggle('hidden', selectedItem === null)
   }
 
   function RemoveFromShoppingListStore (item) {
