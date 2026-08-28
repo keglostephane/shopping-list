@@ -7,8 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const deleteAllBtn = document.querySelector('#delete-all')
   const shoppingList = document.querySelector('#shopping-list')
   let selectedItem = null
-  const shoppingListStore = []
+  let lastItemKey = getLastItemKey()
 
+  populateList()
   addItemBtn.addEventListener('click', handleAddItem)
   clearItemInputBtn.addEventListener('click', handleClearItemInput)
   updateItemBtn.addEventListener('click', handleUpdateItem)
@@ -16,8 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
   deleteAllBtn.addEventListener('click', handleDeleteAllItems)
 
   function handleAddItem () {
+    const item = addItem(getItemInput())
+    if (item) {
+      localStorage.setItem(++lastItemKey, item.textContent.slice(0, -1))
+    }
     selectedItem = null
-    addItem()
     clearItemInput()
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
@@ -28,7 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleUpdateItem () {
     if (!selectedItem) return
 
-    if (getItemInput()) { updateItem() }
+    if (getItemInput()) {
+      const selectedItemKey = getItemKeyFromContent(selectedItem.textContent.slice(0, -1))
+      updateItem()
+      localStorage.setItem(selectedItemKey, getItemContent(selectedItem))
+    }
 
     selectedItem = null
     itemInput.focus()
@@ -54,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleDeleteItem (event) {
     selectedItem = null
     deleteItem(event.target.parentElement)
-    RemoveFromShoppingListStore(event.target.parentElement)
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
     toggleDisplayUpdateItem()
@@ -83,21 +90,19 @@ document.addEventListener('DOMContentLoaded', () => {
     itemInput.value = ''
   }
 
-  function addItem () {
-    const input = getItemInput()
-
-    if (!input) return
+  function addItem (content) {
+    if (!content) return null
 
     const li = document.createElement('li')
     const span = document.createElement('span')
-    const liText = document.createTextNode(input)
+    const liText = document.createTextNode(content)
     const spanText = document.createTextNode('+')
     span.appendChild(spanText)
     li.appendChild(liText)
     li.appendChild(span)
     li.classList.add('item-card')
-    shoppingListStore.push(li.textContent.slice(0, -1))
     shoppingList.appendChild(li)
+    return li
   }
 
   function updateItem () {
@@ -111,24 +116,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function deleteItem (item) {
-    item.remove()
+    if (item) {
+      localStorage.removeItem(
+        getItemKeyFromContent(item.textContent.slice(0, -1)))
+      item.remove()
+    }
   }
 
   function deleteAllItems () {
     while (shoppingList.lastElementChild) {
-      shoppingList.lastElementChild.remove()
-      shoppingListStore.pop()
+      deleteItem(shoppingList.lastElementChild)
     }
   }
 
   function toggleDisplayItemsFilter () {
     itemFilterInput.parentElement.classList
-      .toggle('hidden', shoppingListStore.length < 1)
+      .toggle('hidden', localStorage.length < 1)
   }
 
   function toggleDisplayClearAll () {
     deleteAllBtn.parentElement.classList
-      .toggle('hidden', shoppingListStore.length < 1)
+      .toggle('hidden', localStorage.length < 1)
   }
 
   function toggleDisplayUpdateItem () {
@@ -136,9 +144,31 @@ document.addEventListener('DOMContentLoaded', () => {
       .toggle('hidden', selectedItem === null)
   }
 
-  function RemoveFromShoppingListStore (item) {
-    const itemContent = item.innerText.slice(0, -1)
-    const itemIndex = shoppingListStore.indexOf(itemContent)
-    shoppingListStore.splice(itemIndex, 1)
+  function getItemContent (item) {
+    if (item) return item.textContent.slice(0, -1)
+  }
+
+  function getLastItemKey () {
+    if (localStorage.length) {
+      return Math.max(...Object.keys(localStorage)
+        .map(Number)
+        .filter((k) => { if (k !== NaN) return k }))
+    }
+    return 0
+  }
+
+  function getItemKeyFromContent (content) {
+    for (const key of Object.keys(localStorage)) {
+      if (localStorage.getItem(key) === content) { return key }
+    }
+    return null
+  }
+
+  function populateList () {
+    for (const key of Object.keys(localStorage).toSorted()) {
+      addItem(localStorage.getItem(key))
+    }
+    toggleDisplayItemsFilter()
+    toggleDisplayClearAll()
   }
 })
