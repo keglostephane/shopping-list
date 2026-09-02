@@ -18,9 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleAddItem () {
     const item = addItem(getItemInput())
+
     if (item) {
       localStorage.setItem(++lastItemKey, item.textContent.slice(0, -1))
     }
+
+    if (selectedItem) {
+      selectedItem.classList.remove('selected')
+    }
+
     selectedItem = null
     clearItemInput()
     toggleDisplayItemsFilter()
@@ -38,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem(selectedItemKey, getItemContent(selectedItem))
     }
 
+    selectedItem.classList.remove('selected')
     selectedItem = null
     itemInput.focus()
     clearItemInput()
@@ -54,12 +61,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function handleSelectItemToUpdate (event) {
+    if (selectedItem) {
+      selectedItem.classList.remove('selected')
+    }
+
     selectedItem = event.target
+    selectedItem.classList.add('selected')
     itemInput.value = selectedItem.textContent.slice(0, -1)
     toggleDisplayUpdateItem()
   }
 
   function handleDeleteItem (event) {
+    if (selectedItem) {
+      selectedItem.classList.remove('selected')
+    }
+
     selectedItem = null
     deleteItem(event.target.parentElement)
     toggleDisplayItemsFilter()
@@ -168,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const key of Object.keys(localStorage).toSorted()) {
       addItem(localStorage.getItem(key))
     }
+
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
   }

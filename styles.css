@@ -66,6 +66,7 @@ main ul#shopping-list {
     li {
         font-weight: bold;
         text-transform: capitalize;
+        cursor: default;
     }
 
     li span {
@@ -82,13 +83,13 @@ main ul#shopping-list {
     }
 
     .item-card {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    align-items: center;
-    border: 1px solid #BFBFBF;
-    padding: 12px;
-    overflow-wrap: anywhere;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        border: 1px solid #BFBFBF;
+        padding: 12px;
+        overflow-wrap: anywhere;
     }
 }
 
@@ -158,4 +159,8 @@ main ul#shopping-list {
     gap: 16px;
 }
 
+/* Selection */
 
+.selected {
+    background-color: #FEF9C2;
+}
