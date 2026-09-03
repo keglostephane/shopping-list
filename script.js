@@ -5,16 +5,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearItemInputBtn = document.querySelector('#clear-input')
   const updateItemBtn = document.querySelector('#update-item')
   const deleteAllBtn = document.querySelector('#delete-all')
+  const clearItemFilterInputBtn = document.querySelector('#clearable-filter')
   const shoppingList = document.querySelector('#shopping-list')
   let selectedItem = null
   let lastItemKey = getLastItemKey()
+  const debouncedHandleFilterItems = debounce(handleFilterItems)
 
   populateList()
+
+  if (getItemFilterInput()) {
+    handleFilterItems()
+  }
+
   addItemBtn.addEventListener('click', handleAddItem)
   clearItemInputBtn.addEventListener('click', handleClearItemInput)
   updateItemBtn.addEventListener('click', handleUpdateItem)
   shoppingList.addEventListener('click', handleModifyItem)
   deleteAllBtn.addEventListener('click', handleDeleteAllItems)
+  itemFilterInput.addEventListener('input', debouncedHandleFilterItems)
+  clearItemFilterInputBtn.addEventListener('click', handleClearItemFilterInput)
 
   function handleAddItem () {
     const item = addItem(getItemInput())
@@ -39,7 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!selectedItem) return
 
     if (getItemInput()) {
-      const selectedItemKey = getItemKeyFromContent(selectedItem.textContent.slice(0, -1))
+      const selectedItemKey = getItemKeyFromContent(
+        selectedItem.textContent.slice(0, -1))
       updateItem()
       localStorage.setItem(selectedItemKey, getItemContent(selectedItem))
     }
@@ -93,17 +103,38 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleDisplayUpdateItem()
   }
 
+  function handleFilterItems () {
+    toggleDisplayClearItemFilter()
+    revertDisplayItems()
+    filterItems()
+  }
+
   function handleClearItemInput () {
     clearItemInput()
     itemInput.focus()
+  }
+
+  function handleClearItemFilterInput () {
+    clearItemFilterInput()
+    toggleDisplayClearItemFilter()
+      itemFilterInput.focus()
+      revertDisplayItems()
   }
 
   function getItemInput () {
     return itemInput.value.trim()
   }
 
+  function getItemFilterInput () {
+    return itemFilterInput.value.trim().toLowerCase()
+  }
+
   function clearItemInput () {
     itemInput.value = ''
+  }
+
+  function clearItemFilterInput () {
+    itemFilterInput.value = ''
   }
 
   function addItem (content) {
@@ -145,6 +176,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function filterItems () {
+    const query = getItemFilterInput()
+    shoppingList.querySelectorAll('li').forEach((item) => {
+      if (!item.textContent.toLowerCase().includes(query)) {
+        item.classList.add('hidden')
+      }
+    })
+  }
+
+  function revertDisplayItems () {
+    shoppingList.querySelectorAll('li').forEach((item) => {
+      if (item.classList.contains('hidden')) {
+        item.classList.remove('hidden')
+      }
+    })
+  }
+
   function toggleDisplayItemsFilter () {
     itemFilterInput.parentElement.classList
       .toggle('hidden', localStorage.length < 1)
@@ -160,8 +208,13 @@ document.addEventListener('DOMContentLoaded', () => {
       .toggle('hidden', selectedItem === null)
   }
 
+  function toggleDisplayClearItemFilter () {
+    clearItemFilterInputBtn.classList
+      .toggle('hidden', itemFilterInput.value.length < 1)
+  }
+
   function getItemContent (item) {
-    if (item) return item.textContent.slice(0, -1)
+    if (item) { return item.textContent.slice(0, -1) }
   }
 
   function getLastItemKey () {
@@ -187,5 +240,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
+  }
+
+  function debounce (func, delay = 250) {
+    let timeoutID = null
+
+    return (...args) => {
+      if (timeoutID) {
+        clearTimeout(timeoutID)
+      }
+      timeoutID = setTimeout(() => {
+        func.apply(this, args)
+      }, delay)
+    }
   }
 })
