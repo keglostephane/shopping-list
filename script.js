@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     selectedItem = null
-    clearItemInput()
+    clearInput(itemInput)
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
     toggleDisplayUpdateItem()
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedItem.classList.remove('selected')
     selectedItem = null
     itemInput.focus()
-    clearItemInput()
+    clearInput(itemInput)
     toggleDisplayUpdateItem()
   }
 
@@ -114,12 +114,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function handleClearItemInput () {
-    clearItemInput()
+    clearInput(itemInput)
     itemInput.focus()
   }
 
   function handleClearItemFilterInput () {
-    clearItemFilterInput()
+    clearInput(itemFilterInput)
     toggleDisplayClearItemFilter()
     itemFilterInput.focus()
     revertDisplayItems()
@@ -133,12 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return itemFilterInput.value.trim().toLowerCase()
   }
 
-  function clearItemInput () {
-    itemInput.value = ''
-  }
-
-  function clearItemFilterInput () {
-    itemFilterInput.value = ''
+  function clearInput (elem) {
+    elem.value = ''
   }
 
   function addItem (itemContent) {
