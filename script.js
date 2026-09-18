@@ -98,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleDeleteAllItems () {
     selectedItem = null
     deleteAllItems()
+    clearInput(itemInput)
+    clearInput(itemFilterInput)
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
     toggleDisplayUpdateItem()
