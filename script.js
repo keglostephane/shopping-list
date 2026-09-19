@@ -30,9 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const item = addItem(getItemInput())
 
     if (item) {
-      const data = getStorage()
+      const data = readStorage()
       data[String(++lastItemKey)] = getItemContent(item)
-      localStorage.setItem(APP, JSON.stringify(data))
+      writeStorage(data)
     }
 
     if (selectedItem) {
@@ -52,9 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (getItemInput()) {
       const selectedItemKey = getItemKey(selectedItem)
       updateItem()
-      const data = getStorage()
+      const data = readStorage()
       data[selectedItemKey] = getItemContent(selectedItem)
-      localStorage.setItem(APP, JSON.stringify(data))
+      writeStorage(data)
     }
 
     selectedItem.classList.remove('selected')
@@ -89,7 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     selectedItem = null
-    deleteItem(event.target.parentElement)
+    const data = deleteItem(event.target.parentElement)
+    writeStorage(data)
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
     toggleDisplayUpdateItem()
@@ -98,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleDeleteAllItems () {
     selectedItem = null
     deleteAllItems()
+    writeStorage({})
     clearInput(itemInput)
     clearInput(itemFilterInput)
     toggleDisplayItemsFilter()
@@ -161,16 +163,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function deleteItem (item) {
     if (item) {
-      const data = getStorage()
+      const data = readStorage()
       delete data[getItemKey(item)]
-      localStorage.setItem(APP, JSON.stringify(data))
       item.remove()
+      return data
     }
   }
 
   function deleteAllItems () {
     while (shoppingList.lastElementChild) {
-      deleteItem(shoppingList.lastElementChild)
+      shoppingList.lastElementChild.remove()
     }
   }
 
@@ -193,12 +195,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function toggleDisplayItemsFilter () {
     itemFilterInput.parentElement.classList
-      .toggle('hidden', Object.keys(getStorage()).length < 1)
+      .toggle('hidden', Object.keys(readStorage()).length < 1)
   }
 
   function toggleDisplayClearAll () {
     deleteAllBtn.parentElement.classList
-      .toggle('hidden', Object.keys(getStorage()).length < 1)
+      .toggle('hidden', Object.keys(readStorage()).length < 1)
   }
 
   function toggleDisplayUpdateItem () {
@@ -216,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function populateList () {
-    const data = getStorage()
+    const data = readStorage()
     for (const key of Object.keys(data).toSorted()) {
       addItem(data[key])
     }
@@ -238,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function getStorage () {
+  function readStorage () {
     const storage = localStorage.getItem(APP) ?? {}
 
     if (Object.keys(storage).length) {
@@ -249,9 +251,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return storage
   }
 
+  function writeStorage (data) {
+    localStorage.setItem(APP, JSON.stringify(data))
+  }
+
   function getLastItemKey () {
-    if (Object.keys(getStorage()).length) {
-      return Math.max(...Object.keys(getStorage())
+    if (Object.keys(readStorage()).length) {
+      return Math.max(...Object.keys(readStorage())
         .map(Number)
         .filter((k) => { if (k !== NaN) return k }))
     }
@@ -259,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getItemKey (item) {
-    const data = getStorage()
+    const data = readStorage()
     const itemContent = getItemContent(item)
     for (const key of Object.keys(data)) {
       if (data[key] === itemContent) { return key }
