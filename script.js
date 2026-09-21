@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function filterItems () {
     const query = getItemFilterInput()
     shoppingList.querySelectorAll('li').forEach((item) => {
-      if (!item.textContent.toLowerCase().includes(query)) {
+        if (!normalizeText(item.textContent).includes(normalizeText(query))) {
         item.classList.add('hidden')
       }
     })
@@ -191,6 +191,17 @@ document.addEventListener('DOMContentLoaded', () => {
         item.classList.remove('hidden')
       }
     })
+  }
+
+  function normalizeText (text) {
+    return text
+      .trim()
+      .toLowerCase()
+      .normalize('NFKD')
+    // Remove diacritic marks (accents)
+      .replace(/[\u0300-\u036F]/g, '')
+    // Collapse unnecessary multiple spaces
+      .replace(/\s+/g, ' ')
   }
 
   function toggleDisplayItemsFilter () {
