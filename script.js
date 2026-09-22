@@ -110,7 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleFilterItems () {
     toggleDisplayClearItemFilter()
     revertDisplayItems()
-    filterItems()
+    if (getItemFilterInput()) {
+      filterItems()
+      highlightMatches()
+    }
   }
 
   function handleClearItemInput () {
@@ -179,17 +182,19 @@ document.addEventListener('DOMContentLoaded', () => {
   function filterItems () {
     const query = getItemFilterInput()
     shoppingList.querySelectorAll('li').forEach((item) => {
-        if (!normalizeText(item.textContent).includes(normalizeText(query))) {
+      if (!normalizeText(item.textContent).includes(normalizeText(query))) {
         item.classList.add('hidden')
       }
     })
   }
 
   function revertDisplayItems () {
+    const pattern = /<\/?mark>/
     shoppingList.querySelectorAll('li').forEach((item) => {
       if (item.classList.contains('hidden')) {
         item.classList.remove('hidden')
       }
+      item.innerHTML = item.innerHTML.replace(pattern, '')
     })
   }
 
@@ -202,6 +207,20 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/[\u0300-\u036F]/g, '')
     // Collapse unnecessary multiple spaces
       .replace(/\s+/g, ' ')
+  }
+
+  function highlightMatches () {
+    const toMatch = normalizeText(getItemFilterInput())
+    const pattern = new RegExp(`(${toMatch})`)
+    shoppingList.querySelectorAll('li').forEach((item) => {
+      if (!item.classList.contains('hidden')) {
+        const matchIndex = normalizeText(item.textContent).search(pattern)
+        const matched = item.innerHTML
+          .substring(matchIndex, matchIndex + toMatch.length)
+        const toHighlight = '<mark>' + matched + '</mark>'
+        item.innerHTML = item.innerHTML.replace(matched, toHighlight)
+      }
+    })
   }
 
   function toggleDisplayItemsFilter () {
