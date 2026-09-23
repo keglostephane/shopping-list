@@ -96,6 +96,10 @@ main ul#shopping-list {
         cursor: default;
     }
 
+    li mark {
+        text-decoration: underline;
+    }
+
     li span {
         color: red;
         display: inline-block;

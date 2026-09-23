@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleModifyItem (event) {
     if (event.target.tagName === 'SPAN') {
       handleDeleteItem(event)
-    } else if (event.target.tagName === 'LI') {
+    } else if (event.target.tagName === 'P') {
       handleSelectItemToUpdate(event)
       itemInput.focus()
     }
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedItem.classList.remove('selected')
     }
 
-    selectedItem = event.target
+    selectedItem = event.target.parentElement
     selectedItem.classList.add('selected')
     itemInput.value = getItemContent(selectedItem)
     toggleDisplayUpdateItem()
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getItemInput () {
-    return itemInput.value.trim()
+    return itemInput.value.trim().replace(/\s+/g, ' ')
   }
 
   function getItemFilterInput () {
@@ -143,11 +143,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!itemContent) return null
 
     const li = document.createElement('li')
+    const p = document.createElement('p')
+    const pText = document.createTextNode(itemContent)
     const span = document.createElement('span')
-    const liText = document.createTextNode(itemContent)
     const spanText = document.createTextNode('+')
+    p.appendChild(pText)
     span.appendChild(spanText)
-    li.appendChild(liText)
+    li.appendChild(p)
     li.appendChild(span)
     li.classList.add('item-card')
     shoppingList.appendChild(li)
@@ -155,12 +157,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateItem () {
+    const p = document.createElement('p')
+    const pText = document.createTextNode(getItemInput())
     const span = document.createElement('span')
     const spanText = document.createTextNode('+')
-    const liText = document.createTextNode(getItemInput())
+    p.appendChild(pText)
     span.appendChild(spanText)
     selectedItem.textContent = ''
-    selectedItem.appendChild(liText)
+    selectedItem.appendChild(p)
     selectedItem.appendChild(span)
   }
 
@@ -182,7 +186,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function filterItems () {
     const query = getItemFilterInput()
     shoppingList.querySelectorAll('li').forEach((item) => {
-      if (!normalizeText(item.textContent).includes(normalizeText(query))) {
+      if (!normalizeText(item.textContent
+        .slice(0, -1))
+        .includes(normalizeText(query))) {
         item.classList.add('hidden')
       }
     })
@@ -212,13 +218,17 @@ document.addEventListener('DOMContentLoaded', () => {
   function highlightMatches () {
     const toMatch = normalizeText(getItemFilterInput())
     const pattern = new RegExp(`(${toMatch})`)
+    const li = shoppingList.querySelector('li')
+    const offset = li.innerHTML.search(li.textContent)
     shoppingList.querySelectorAll('li').forEach((item) => {
       if (!item.classList.contains('hidden')) {
         const matchIndex = normalizeText(item.textContent).search(pattern)
         const matched = item.innerHTML
-          .substring(matchIndex, matchIndex + toMatch.length)
+          .substring(matchIndex + offset, matchIndex + offset + toMatch.length)
         const toHighlight = '<mark>' + matched + '</mark>'
-        item.innerHTML = item.innerHTML.replace(matched, toHighlight)
+        item.innerHTML = item.innerHTML
+          .slice(0, matchIndex + offset) + toHighlight + item.innerHTML
+          .slice(matchIndex + offset + toMatch.length)
       }
     })
   }
