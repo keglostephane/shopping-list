@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
     toggleDisplayUpdateItem()
+    handleFilterItems()
   }
 
   function handleUpdateItem () {
@@ -61,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedItem = null
     clearInput(itemInput)
     toggleDisplayUpdateItem()
+    handleFilterItems()
   }
 
   function handleModifyItem (event) {
@@ -113,6 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (getItemFilterInput()) {
       filterItems()
       highlightMatches()
+    }
+    if (selectedItem) {
+      selectedItem.classList.remove('selected')
     }
   }
 
