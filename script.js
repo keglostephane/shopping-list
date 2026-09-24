@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleModifyItem (event) {
     if (event.target.tagName === 'SPAN') {
       handleDeleteItem(event)
-    } else if (event.target.tagName === 'P') {
+    } else if (event.target.tagName === 'P' || event.target.tagName === 'LI') {
       handleSelectItemToUpdate(event)
       itemInput.focus()
     }
@@ -79,7 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedItem.classList.remove('selected')
     }
 
-    selectedItem = event.target.parentElement
+    selectedItem = event.target.tagName === 'LI'
+      ? event.target
+      : event.target.parentElement
     selectedItem.classList.add('selected')
     itemInput.value = getItemContent(selectedItem)
     toggleDisplayUpdateItem()
