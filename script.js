@@ -66,7 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function handleModifyItem (event) {
-    if (event.target.tagName === 'SPAN') {
+    if (event.target.tagName === 'SPAN' &&
+          confirm('Do you really want to delete this item ?')) {
       handleDeleteItem(event)
     } else if (event.target.tagName === 'P' || event.target.tagName === 'LI') {
       handleSelectItemToUpdate(event)
@@ -95,29 +96,38 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedItem = null
     const data = deleteItem(event.target.parentElement)
     writeStorage(data)
+    clearInput(itemInput)
     toggleDisplayItemsFilter()
     toggleDisplayClearAll()
     toggleDisplayUpdateItem()
   }
 
   function handleDeleteAllItems () {
-    selectedItem = null
-    deleteAllItems()
-    writeStorage({})
-    clearInput(itemInput)
-    clearInput(itemFilterInput)
-    toggleDisplayItemsFilter()
-    toggleDisplayClearAll()
-    toggleDisplayUpdateItem()
+    if (confirm('You are about to delete all items. Are you sure ?')) {
+      selectedItem = null
+      deleteAllItems()
+      writeStorage({})
+      clearInput(itemInput)
+      clearInput(itemFilterInput)
+      toggleDisplayItemsFilter()
+      toggleDisplayClearAll()
+      toggleDisplayUpdateItem()
+    }
+
+    if (selectedItem) {
+      itemInput.focus()
+    }
   }
 
   function handleFilterItems () {
     toggleDisplayClearItemFilter()
     revertDisplayItems()
+
     if (getItemFilterInput()) {
       filterItems()
       highlightMatches()
     }
+
     if (selectedItem) {
       selectedItem.classList.remove('selected')
     }
